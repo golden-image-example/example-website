@@ -110,7 +110,7 @@ spec:
     - update-php-deployment
   - name: copy-content-php-pv
     taskRef:
-      name: oc-rsh
+      name: oc-rsync
     params:
     - name: deployment
       value: $(params.php-deployment-name)

@@ -1,0 +1,25 @@
+---
+# This only works if the pod replica count for the deployment is 1
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: oc-exec
+spec:
+  workspaces:
+  - name: source
+  params:
+    - name: command
+      description: The command to execute inside of the pod
+      type: string
+    - name: deployment
+      description: The name of the deployment the pod is a member of
+      type: string 
+  steps:
+    - name: oc-rsh
+      image: image-registry.openshift-image-registry.svc:5000/openshift/cli:latest
+      workingDir: /workspace/source
+      command: ["/bin/bash", "-c"]
+      args:
+        - |-
+          echo Running $(inputs.params.command) in the container backing deployment $(inputs.params.deployment)
+          oc exec $(oc get pods -l deployment=$(inputs.params.deployment) --template='{{range .items}}{{.metadata.name}}{{end}}') -- composer install --no-dev --optimize-autoloader --ignore-platform-reqs
