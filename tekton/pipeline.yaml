@@ -123,14 +123,29 @@ spec:
       workspace: shared-workspace
     runAfter:
     - wait-for-php-deployment
-  - name: copy-content-php-var-www-html
+  - name: copy-content-php-composer-lock
     taskRef:
       name: oc-rsync
     params:
     - name: deployment
       value: $(params.php-deployment-name)
     - name: source-dir
-      value: "composer.*"
+      value: "composer.lock"
+    - name: target-dir
+      value: "/var/www/html/"
+    workspaces:
+    - name: source
+      workspace: shared-workspace
+    runAfter:
+    - wait-for-php-deployment
+  - name: copy-content-php-composer-json
+    taskRef:
+      name: oc-rsync
+    params:
+    - name: deployment
+      value: $(params.php-deployment-name)
+    - name: source-dir
+      value: "composer.json"
     - name: target-dir
       value: "/var/www/html/"
     workspaces:
