@@ -77,7 +77,7 @@ spec:
     - update-nginx-deployment
   - name: copy-content-nginx-pv
     taskRef:
-      name: oc-rsh
+      name: oc-rsync
     params:
     - name: deployment
       value: $(params.nginx-deployment-name)
