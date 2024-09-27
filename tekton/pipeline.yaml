@@ -108,6 +108,16 @@ spec:
       value: $(params.php-deployment-name)
     runAfter:
     - update-php-deployment
+  - name: php-make-var-www-html-htdocs-dir
+    taskRef:
+      name: oc-exec
+    params:
+    - name: deployment
+      value: $(params.php-deployment-name)
+    - name: command
+      value: "mkdir -p /var/www/html/htdocs/ && chmod 775 -R /var/www/html/htdocs/"
+    runAfter:
+    - wait-for-php-deployment
   - name: copy-content-php-pv
     taskRef:
       name: oc-rsync
@@ -122,7 +132,7 @@ spec:
     - name: source
       workspace: shared-workspace
     runAfter:
-    - wait-for-php-deployment
+    - php-make-var-www-html-htdocs-dir
   - name: copy-content-php-composer-files
     taskRef:
       name: oc-rsync
@@ -137,7 +147,7 @@ spec:
     - name: source
       workspace: shared-workspace
     runAfter:
-    - wait-for-php-deployment
+    - php-make-var-www-html-htdocs-dir
   - name: php-run-composer
     taskRef:
       name: oc-exec
