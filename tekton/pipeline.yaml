@@ -115,7 +115,7 @@ spec:
     - name: deployment
       value: $(params.php-deployment-name)
     - name: command
-      value: "mkdir -p /var/www/html/htdocs/ && chmod 775 -R /var/www/html/htdocs/"
+      value: "mkdir -m 775 /var/www/html/htdocs/"
     runAfter:
     - wait-for-php-deployment
   - name: copy-content-php-pv

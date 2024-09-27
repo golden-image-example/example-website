@@ -20,4 +20,4 @@ spec:
       args:
         - |-
           echo Running $(inputs.params.command) in the container backing deployment $(inputs.params.deployment)
-          oc exec $(oc get pods -l deployment=$(inputs.params.deployment) --template='{{range .items}}{{.metadata.name}}{{end}}') -- 
+          oc exec $(oc get pods -l deployment=$(inputs.params.deployment) --template='{{range .items}}{{.metadata.name}}{{end}}') -- $(inputs.params.command) 
