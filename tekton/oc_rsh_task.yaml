@@ -1,0 +1,28 @@
+---
+# This only works if the pod replica count for the deployment is 1
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: oc-rsh
+spec:
+  workspaces:
+  - name: source
+  params:
+    - name: source-dir
+      description: The location of the source directory in the workspace you want to upload to the pod
+      type: string
+    - name: target-dir
+      description: The location of the target directory in the pod
+      type: string
+    - name: deployment
+      description: The name of the deployment the pod is a member of
+      type: string 
+  steps:
+    - name: oc-rsh
+      image: image-registry.openshift-image-registry.svc:5000/openshift/cli:latest
+      workingDir: /workspace/source
+      command: ["/bin/bash", "-c"]
+      args:
+        - |-
+          echo Applying manifests in $(inputs.params.manifest_dir) directory
+          oc rsync $(inputs.params.source-dir) $(oc get pods -l deployment=$(inputs.params.deployment) --template='{{range .items}}{{.metadata.name}}{{end}}'):$(inputs.params.target-dir)

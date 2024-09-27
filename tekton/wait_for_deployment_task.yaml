@@ -1,0 +1,28 @@
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: wait-for-deployment
+spec:
+  params:
+    - name: deployment
+      description: The name of the deployment to wait on
+      type: string
+    - name: timeout
+      description: How long to wait for the deployment to become available before you timeout
+      type: string
+      default: "60s"
+    - name: namespace
+      description: The k8s/ocp namespace of the deployment
+      type: string
+      default: "$(context.taskRun.namespace)"
+  steps:
+    - name: wait-for-deployment
+      image: image-registry.openshift-image-registry.svc:5000/openshift/cli:latest
+      workingDir: /workspace/source
+      command: ["/bin/bash", "-c"]
+      args:
+        - |-
+          echo Waiting $(inputs.params.timeout) for $(inputs.params.deployment) deployment in the $(inputs.params.namespace) namespace to reach available condition
+          sleep 5s
+          oc wait --for=condition=available --timeout=$(inputs.params.timeout) deployment/$(inputs.params.deployment) -n $(inputs.params.namespace)

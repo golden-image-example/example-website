@@ -67,6 +67,29 @@ spec:
       value: $(params.nginx-image-name)
     runAfter:
     - apply-manifests
+  - name: wait-for-nginx-deployment
+    taskRef:
+      name: wait-for-deployment
+    params:
+    - name: deployment
+      value: $(params.nginx-deployment-name)
+    runAfter:
+    - update-nginx-deployment
+  - name: copy-content-nginx-pv
+    taskRef:
+      name: oc-rsh
+    params:
+    - name: deployment
+      value: $(params.nginx-deployment-name)
+    - name: source-dir
+      value: "./htdocs/"
+    - name: target-dir
+      value: "/var/www/html/htdocs/"
+    workspaces:
+    - name: source
+      workspace: shared-workspace
+    runAfter:
+    - wait-for-nginx-deployment
   - name: update-php-deployment
     taskRef:
       name: update-deployment
@@ -77,5 +100,28 @@ spec:
       value: $(params.php-image-name)
     runAfter:
      - apply-manifests
+  - name: wait-for-php-deployment
+    taskRef:
+      name: wait-for-deployment
+    params:
+    - name: deployment
+      value: $(params.php-deployment-name)
+    runAfter:
+    - update-php-deployment
+  - name: copy-content-php-pv
+    taskRef:
+      name: oc-rsh
+    params:
+    - name: deployment
+      value: $(params.php-deployment-name)
+    - name: source-dir
+      value: "./htdocs/"
+    - name: target-dir
+      value: "/opt/app/htdocs/"
+    workspaces:
+    - name: source
+      workspace: shared-workspace
+    runAfter:
+    - wait-for-php-deployment
   workspaces:
     - name: shared-workspace
