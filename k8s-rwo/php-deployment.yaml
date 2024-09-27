@@ -43,7 +43,7 @@ spec:
         terminationMessagePolicy: File
         volumeMounts:
         - name: htdocs
-          mountPath: "/opt/app/htdocs/"
+          mountPath: "/var/www/html/"
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       schedulerName: default-scheduler
