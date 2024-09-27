@@ -117,7 +117,7 @@ spec:
     - name: source-dir
       value: "./htdocs/"
     - name: target-dir
-      value: "/opt/app/htdocs/"
+      value: "/var/www/html/htdocs/"
     workspaces:
     - name: source
       workspace: shared-workspace
