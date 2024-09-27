@@ -18,7 +18,7 @@ spec:
       description: The name of the deployment the pod is a member of
       type: string 
   steps:
-    - name: oc-rsh
+    - name: oc-rsync
       image: image-registry.openshift-image-registry.svc:5000/openshift/cli:latest
       workingDir: /workspace/source
       command: ["/bin/bash", "-c"]

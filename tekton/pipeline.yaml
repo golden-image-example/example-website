@@ -138,5 +138,16 @@ spec:
       workspace: shared-workspace
     runAfter:
     - wait-for-php-deployment
+  - name: php-run-composer
+    taskRef:
+      name: oc-exec
+    params:
+    - name: deployment
+      value: $(params.php-deployment-name)
+    - name: command
+      value: "composer install --no-dev --optimize-autoloader --ignore-platform-reqs"
+    runAfter:
+    - copy-content-php-composer-files
+    - copy-content-php-pv
   workspaces:
     - name: shared-workspace
