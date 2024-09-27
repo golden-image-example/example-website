@@ -130,7 +130,7 @@ spec:
     - name: deployment
       value: $(params.php-deployment-name)
     - name: source-dir
-      value: "./htdocs/"
+      value: "composer.*"
     - name: target-dir
       value: "/var/www/html/"
     workspaces:
