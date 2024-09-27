@@ -2,34 +2,27 @@
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
-  name: build-druptest-app
-  namespace: druptest
+  name: deploy-example-website
 spec:
   params:
   - name: git-url
     type: string
     description: url of the git repo for the code of deployment
-    default: "https://github.com/kfrankli/druptest"
+    default: "https://github.com/golden-image-example/example-website"
   - name: git-revision
     type: string
     description: revision to be used from repo of the code for deployment
     default: main
-  - name: nginx-containerfile-location
-    type: string
-    default: ".ContainerFiles/nginx/Containerfile"
   - name: nginx-image-name
     type: string
-    default: "image-registry.openshift-image-registry.svc:5000/druptest/druptest-nginx:latest"
-  - name: php-containerfile-location
-    type: string
-    default: ".ContainerFiles/php/Containerfile"
+    default: "image-registry.openshift-image-registry.svc:5000/golden-image-example/nginx:1.22"
   - name: php-image-name
     type: string
-    default: "image-registry.openshift-image-registry.svc:5000/druptest/druptest-php:latest"
+    default: "image-registry.openshift-image-registry.svc:5000/golden-image-example/php:8.2-fqm"
   - name: k8s-manifest-dir
     description: The directory in source that contains yaml manifests
     type: string
-    default: "k8s"
+    default: "k8s-rwo"
   - name: nginx-deployment-name
     type: string
     default: "nginx"
@@ -53,34 +46,6 @@ spec:
       value: "true"
     - name: revision
       value: $(params.git-revision)
-  - name: build-and-push-nginx-image
-    taskRef:
-      name: buildah
-      kind: ClusterTask
-    params:
-    - name: IMAGE
-      value: $(params.nginx-image-name)
-    - name: DOCKERFILE
-      value: $(params.nginx-containerfile-location)
-    workspaces:
-    - name: source
-      workspace: shared-workspace
-    runAfter:
-    - fetch-repository
-  - name: build-and-push-php-image
-    taskRef:
-      name: buildah
-      kind: ClusterTask
-    params:
-    - name: IMAGE
-      value: $(params.php-image-name)
-    - name: DOCKERFILE
-      value: $(params.php-containerfile-location)
-    workspaces:
-    - name: source
-      workspace: shared-workspace
-    runAfter:
-    - fetch-repository
   - name: apply-manifests
     taskRef:
       name: apply-manifests
@@ -91,8 +56,7 @@ spec:
     - name: source
       workspace: shared-workspace
     runAfter:
-    - build-and-push-nginx-image
-    - build-and-push-php-image
+    - fetch-repository
   - name: update-nginx-deployment
     taskRef:
       name: update-deployment
