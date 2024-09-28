@@ -29,7 +29,7 @@ spec:
         persistentVolumeClaim:
           claimName: pvc-htdocs
       containers:
-      - image: druptest-nginx:latest
+      - image: golden-image-example/nginx:1.22
         imagePullPolicy: Always
         name: nginx
         ports:
@@ -41,7 +41,7 @@ spec:
         volumeMounts:
         - name: htdocs
           mountPath: "/var/www/html/"
-      - image: druptest-php:latest
+      - image: golden-image-example/php:8.2-fqm
         imagePullPolicy: Always
         name: php
         ports:
