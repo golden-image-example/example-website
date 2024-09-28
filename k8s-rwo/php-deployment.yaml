@@ -30,7 +30,7 @@ spec:
         persistentVolumeClaim:
           claimName: pvc-htdocs-php
       containers:
-      - image: druptest-php:latest
+      - image: php:8.2-fqm
         imagePullPolicy: Always
         name: php
         ports:

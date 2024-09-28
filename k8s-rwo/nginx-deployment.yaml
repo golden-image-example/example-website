@@ -30,7 +30,7 @@ spec:
         persistentVolumeClaim:
           claimName: pvc-htdocs-nginx
       containers:
-      - image: druptest-nginx:latest
+      - image: nginx:1.22
         imagePullPolicy: Always
         name: nginx
         ports:
