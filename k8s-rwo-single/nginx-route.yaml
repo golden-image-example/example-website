@@ -4,7 +4,7 @@ apiVersion: route.openshift.io/v1
 metadata:
   name: nginx
   labels:
-    app: nginx
+    app: example-website
 spec:
   to:
     kind: Service

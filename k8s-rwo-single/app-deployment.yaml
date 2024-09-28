@@ -3,15 +3,15 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: nginx
-  name: nginx
+    app: example-website
+  name: example-website
 spec:
   progressDeadlineSeconds: 600
   replicas: 1
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      deployment: nginx
+      deployment: example-website
   strategy:
     rollingUpdate:
       maxSurge: 25%
@@ -22,7 +22,7 @@ spec:
       annotations:
         alpha.image.policy.openshift.io/resolve-names: '*'
       labels:
-        deployment: nginx
+        deployment: example-website
     spec:
       volumes:
       - name: htdocs
