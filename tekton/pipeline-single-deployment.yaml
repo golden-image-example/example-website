@@ -60,6 +60,8 @@ spec:
     params:
     - name: deployment
       value: $(params.deployment-name)
+    - name: container-name
+      value: nginx
     - name: IMAGE
       value: $(params.nginx-image-name)
     runAfter:

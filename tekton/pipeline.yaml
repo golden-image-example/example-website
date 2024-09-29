@@ -63,6 +63,8 @@ spec:
     params:
     - name: deployment
       value: $(params.nginx-deployment-name)
+    - name: container-name
+      value: $(params.nginx-deployment-name)
     - name: IMAGE
       value: $(params.nginx-image-name)
     runAfter:
@@ -95,6 +97,8 @@ spec:
       name: update-deployment
     params:
     - name: deployment
+      value: $(params.php-deployment-name)
+    - name: container-name
       value: $(params.php-deployment-name)
     - name: IMAGE
       value: $(params.php-image-name)
