@@ -83,7 +83,7 @@ spec:
     - name: container-name
       value: php
     - name: command
-      value: "mkdir -m 775 /var/www/html/htdocs/"
+      value: "mkdir -m 775 -p /var/www/html/htdocs/"
     runAfter:
     - wait-for-deployment
   - name: copy-content-pv
