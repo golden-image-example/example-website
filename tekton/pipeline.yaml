@@ -118,6 +118,8 @@ spec:
     params:
     - name: deployment
       value: $(params.php-deployment-name)
+    - name: container-name
+      value: $(params.php-deployment-name)
     - name: command
       value: "mkdir -m 775 /var/www/html/htdocs/"
     runAfter:
@@ -157,6 +159,8 @@ spec:
       name: oc-exec
     params:
     - name: deployment
+      value: $(params.php-deployment-name)
+    - name: container-name
       value: $(params.php-deployment-name)
     - name: command
       value: "composer install --no-dev --optimize-autoloader --ignore-platform-reqs"

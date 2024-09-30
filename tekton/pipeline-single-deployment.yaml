@@ -80,6 +80,8 @@ spec:
     params:
     - name: deployment
       value: $(params.deployment-name)
+    - name: container-name
+      value: php
     - name: command
       value: "mkdir -m 775 /var/www/html/htdocs/"
     runAfter:
@@ -120,6 +122,8 @@ spec:
     params:
     - name: deployment
       value: $(params.deployment-name)
+    - name: container-name
+      value: php
     - name: command
       value: "composer install --no-dev --optimize-autoloader --ignore-platform-reqs"
     runAfter:
