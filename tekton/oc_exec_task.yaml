@@ -13,7 +13,7 @@ spec:
       description: The name of the deployment the pod is a member of
       type: string 
     - name: container-name
-      description: Thhe name of the container to run the command in
+      description: The name of the container to run the command in
       type: string
   steps:
     - name: oc-exec
@@ -23,4 +23,4 @@ spec:
       args:
         - |-
           echo Running $(inputs.params.command) in the container backing deployment $(inputs.params.deployment)
-          oc exec $(oc get pods -l deployment=$(inputs.params.deployment) --template='{{range .items}}{{.metadata.name}}{{end}}') -c $(inputs.params.container-name) -- $(inputs.params.command) 
+          oc exec $(oc get pods -l deployment=$(inputs.params.deployment) --template='{{range .items}}{{.metadata.name}}{{end}}' --field-selector='status.phase=Running') -c $(inputs.params.container-name) -- $(inputs.params.command)  
