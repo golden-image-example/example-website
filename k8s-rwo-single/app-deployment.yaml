@@ -31,6 +31,9 @@ spec:
       - name: nginx-config-volume
         configMap:
           name: nginx-config
+      - name: website-files
+        persistentVolumeClaim:
+          claimName: pvc-website-files
       containers:
       - image: golden-image-example/nginx:1.22
         imagePullPolicy: Always
@@ -47,6 +50,8 @@ spec:
         - name: nginx-config-volume
           mountPath: /etc/nginx/nginx.conf
           subPath: nginx.conf
+        - name: website-files
+          mountPath: /var/www/html/htdocs/sites/default/
       - image: golden-image-example/php:8.2-fqm
         imagePullPolicy: Always
         name: php

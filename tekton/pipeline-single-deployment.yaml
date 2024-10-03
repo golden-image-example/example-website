@@ -165,7 +165,7 @@ spec:
     - name: source-dir
       value: "./datastore/"
     - name: target-dir
-      value: "/var/www/html/htdocs/sites/"
+      value: "/var/www/html/htdocs/sites/default/"
     workspaces:
     - name: source
       workspace: shared-workspace
