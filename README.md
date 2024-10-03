@@ -115,13 +115,25 @@ It's assumed you have:
     oc create -f ./tekton/pipeline.yaml -n golden-image-example
     ```
 
-21. Now if we go back to the Pipelines section in the OpenShift web-console, we'll see our newly created `deploy-example-website` pipeline. As before, click the 3 dots to the right and click start:
+21. Back to the web console and navigate in the left hand section to Storage > PersistentVolumeClaims:
+
+    ![OCP Storage PVC](./readme-images/storage_pvc2.png)
+
+22. Click the `Create PersistentVolumeClaim` button:
+
+    ![Create PersistentVolumeClaim Button](./readme-images/pvc_button.png)
+
+23. Create a PVC named `pipeline-deploy-app` of type `RWO` and size `1 GiB`. Then click `Create` **Note:** The available `StorageClass` will vary depending based upon your environment:
+
+    ![Create deploy app PersistentVolumeClaim](./readme-images/deploy_app_pvc.png)
+
+22. Now if we go back to the Pipelines section in the OpenShift web-console, we'll see our newly created `deploy-example-website` pipeline. As before, click the 3 dots to the right and click start:
 
     ![Deploy Example Website Start](./readme-images/deploy_example_pipeline_start.png)
 
-16. Very similarly to the before, modify the **shared-workspace** field to `VolumeClaimTemplate` and click `Start`:
+16. Very similarly to the before, modify the **shared-workspace** field to `PersistentVolumeClaim` and select the `pipeline-deploy-app` PersistentVolumeClaim and click `Start`:
 
-    ![Deploy Example Website VolumeClaimTemplate](./readme-images/deploy_example_pipeline_vc_template.png)
+    ![Deploy Example Website PersistentVolumeClaim](./readme-images/deploy_example_pipeline_pvc.png)
 
 17. Now the pipeline should start
 
