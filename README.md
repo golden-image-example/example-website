@@ -88,7 +88,7 @@ It's assumed you have:
 14. Now with those tasks created, we're going to create our pipeline for our application that will use our newly created golden "base images" built by the `nginx-golden-image` and `php-golden-image` pipelines.
 
     ```console
-    oc create -f ./tekton/pipeline-single-deployment.yaml -n golden-image-example
+    oc create -f ./tekton/pipeline.yaml -n golden-image-example
     ```
 
 15. Now if we go back to the Pipelines section in the OpenShift web-console, we'll see our newly created `deploy-example-website` pipeline. As before, click the 3 dots to the right and click start:

@@ -22,13 +22,19 @@ spec:
   - name: k8s-manifest-dir
     description: The directory in source that contains yaml manifests
     type: string
-    default: "k8s-rwo"
-  - name: nginx-deployment-name
+    default: "k8s"
+  - name: deployment-name
+    description: The name of the k8s deployment object for the application
     type: string
-    default: "nginx"
-  - name: php-deployment-name
+    default: "example-website"
+  - name: git-datastore-url
     type: string
-    default: "php"
+    description: git datastore that we are using as a source for files to populate in /var/www/html/htdocs/sites/ of the website
+    default: https://github.com/golden-image-example/datastore.git
+  - name: git-datastore-revision
+    description: The branch to use for the git-datastore-url
+    type: string
+    default: main
   tasks:
   - name: fetch-repository
     taskRef:
@@ -57,79 +63,44 @@ spec:
       workspace: shared-workspace
     runAfter:
     - fetch-repository
-  - name: update-nginx-deployment
+  - name: update-deployment
     taskRef:
       name: update-deployment
     params:
     - name: deployment
-      value: $(params.nginx-deployment-name)
+      value: $(params.deployment-name)
     - name: container-name
-      value: $(params.nginx-deployment-name)
+      value: nginx
     - name: IMAGE
       value: $(params.nginx-image-name)
     runAfter:
     - apply-manifests
-  - name: wait-for-nginx-deployment
+  - name: wait-for-deployment
     taskRef:
       name: wait-for-deployment
     params:
     - name: deployment
-      value: $(params.nginx-deployment-name)
+      value: $(params.deployment-name)
     runAfter:
-    - update-nginx-deployment
-  - name: copy-content-nginx-pv
-    taskRef:
-      name: oc-rsync
-    params:
-    - name: deployment
-      value: $(params.nginx-deployment-name)
-    - name: source-dir
-      value: "./htdocs/"
-    - name: target-dir
-      value: "/var/www/html/htdocs/"
-    workspaces:
-    - name: source
-      workspace: shared-workspace
-    runAfter:
-    - wait-for-nginx-deployment
-  - name: update-php-deployment
-    taskRef:
-      name: update-deployment
-    params:
-    - name: deployment
-      value: $(params.php-deployment-name)
-    - name: container-name
-      value: $(params.php-deployment-name)
-    - name: IMAGE
-      value: $(params.php-image-name)
-    runAfter:
-     - apply-manifests
-  - name: wait-for-php-deployment
-    taskRef:
-      name: wait-for-deployment
-    params:
-    - name: deployment
-      value: $(params.php-deployment-name)
-    runAfter:
-    - update-php-deployment
+    - update-deployment
   - name: php-make-var-www-html-htdocs-dir
     taskRef:
       name: oc-exec
     params:
     - name: deployment
-      value: $(params.php-deployment-name)
+      value: $(params.deployment-name)
     - name: container-name
-      value: $(params.php-deployment-name)
+      value: php
     - name: command
-      value: "mkdir -m 775 /var/www/html/htdocs/"
+      value: "mkdir -m 775 -p /var/www/html/htdocs/"
     runAfter:
-    - wait-for-php-deployment
-  - name: copy-content-php-pv
+    - wait-for-deployment
+  - name: copy-content-pv
     taskRef:
       name: oc-rsync
     params:
     - name: deployment
-      value: $(params.php-deployment-name)
+      value: $(params.deployment-name)
     - name: source-dir
       value: "./htdocs/"
     - name: target-dir
@@ -144,7 +115,7 @@ spec:
       name: oc-rsync
     params:
     - name: deployment
-      value: $(params.php-deployment-name)
+      value: $(params.deployment-name)
     - name: source-dir
       value: "./composer/"
     - name: target-dir
@@ -159,13 +130,46 @@ spec:
       name: oc-exec
     params:
     - name: deployment
-      value: $(params.php-deployment-name)
+      value: $(params.deployment-name)
     - name: container-name
-      value: $(params.php-deployment-name)
+      value: php
     - name: command
       value: "composer install --no-dev --optimize-autoloader --ignore-platform-reqs"
     runAfter:
     - copy-content-php-composer-files
-    - copy-content-php-pv
+    - copy-content-pv
+  - name: copy-datastore-files-to-sites-dir-git-clone-step
+    taskRef:
+      name: git-clone
+      kind: ClusterTask
+    params:
+    - name: url
+      value: $(params.git-datastore-url)
+    - name: subdirectory
+      value: "datastore"
+    - name: deleteExisting
+      value: "true"
+    - name: revision
+      value: $(params.git-datastore-revision)
+    workspaces:
+    - name: output
+      workspace: shared-workspace
+    runAfter:
+    - php-run-composer
+  - name: copy-datastore-files-to-sites-dir-git-ocrsync-step
+    taskRef:
+      name: oc-rsync
+    params:
+    - name: deployment
+      value: $(params.deployment-name)
+    - name: source-dir
+      value: "./datastore/"
+    - name: target-dir
+      value: "/var/www/html/htdocs/sites/default/"
+    workspaces:
+    - name: source
+      workspace: shared-workspace
+    runAfter:
+    - copy-datastore-files-to-sites-dir-git-clone-step
   workspaces:
     - name: shared-workspace
