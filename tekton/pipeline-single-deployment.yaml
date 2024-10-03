@@ -24,8 +24,17 @@ spec:
     type: string
     default: "k8s-rwo-single"
   - name: deployment-name
+    description: The name of the k8s deployment object for the application
     type: string
     default: "example-website"
+  - name: git-datastore-url
+    type: string
+    description: git datastore that we are using as a source for files to populate in /var/www/html/htdocs/sites/ of the website
+    default: https://github.com/golden-image-example/datastore.git
+  - name: git-datastore-revision
+    description: The branch to use for the git-datastore-url
+    type: string
+    default: main
   tasks:
   - name: fetch-repository
     taskRef:
@@ -129,5 +138,38 @@ spec:
     runAfter:
     - copy-content-php-composer-files
     - copy-content-pv
+  - name: copy-datastore-files-to-sites-dir-git-clone-step
+    taskRef:
+      name: git-clone
+      kind: ClusterTask
+    params:
+    - name: url
+      value: $(params.git-datastore-url)
+    - name: subdirectory
+      value: "datastore"
+    - name: deleteExisting
+      value: "true"
+    - name: revision
+      value: $(params.git-datastore-revision)
+    workspaces:
+    - name: output
+      workspace: shared-workspace
+    runAfter:
+    - php-run-composer
+  - name: copy-datastore-files-to-sites-dir-git-ocrsync-step
+    taskRef:
+      name: oc-rsync
+    params:
+    - name: deployment
+      value: $(params.deployment-name)
+    - name: source-dir
+      value: "./datastore/"
+    - name: target-dir
+      value: "/var/www/html/htdocs/sites/"
+    workspaces:
+    - name: source
+      workspace: shared-workspace
+    runAfter:
+    - copy-datastore-files-to-sites-dir-git-clone-step
   workspaces:
     - name: shared-workspace
