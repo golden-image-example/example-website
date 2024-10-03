@@ -66,6 +66,8 @@ spec:
         volumeMounts:
         - name: htdocs
           mountPath: "/var/www/html/"
+        - name: website-files
+          mountPath: /var/www/html/htdocs/sites/default/
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       schedulerName: default-scheduler
