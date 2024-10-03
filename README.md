@@ -39,43 +39,67 @@ It's assumed you have:
     oc create -f ../nginx/tekton/pipeline.yaml -n golden-image-example
     ```
 
-4.  Log in to the OpenShift web console and navigate to the pipelines for your newly create `golden-image-example` project:
+4.  Log in to the OpenShift web console, switch to the `golden-image-example` project, and navigate in the left hand section to Storage > PersistentVolumeClaims:
 
-    ![OCP Pipelines Overview](./readme-images/nginx_pipeline_overview.png)
+    ![OCP Storage PVC](./readme-images/storage_pvc.png)
 
-5.  Click the 3 dots to the right of the `nginx-golden-image` pipeline:
+5.  Click the `Create PersistentVolumeClaim` button:
+
+    ![Create PersistentVolumeClaim Button](./readme-images/pvc_button.png)
+
+6.  Create a PVC named `pipeline-build-php` of type `RWO` and size `1 GiB`. Then click `Create` **Note:** The available `StorageClass` will vary depending based upon your environment:
+
+    ![Create php build PersistentVolumeClaim](./readme-images/php_build_pvc.png)
+
+7.  You should now have an overview of your newly created `pipeline-build-php` PersistentVolumeClaim. Return back via the left hand navigation to Storage > PersistentVolumeClaims:
+
+    ![php build PersistentVolumeClaim](./readme-images/php_build_pvc_overview.png)
+
+8.  Click the `Create PersistentVolumeClaim` button:
+
+    ![Create PersistentVolumeClaim Button](./readme-images/pvc_button.png)
+
+9.  Create a PVC named `pipeline-build-nginx` of type `RWO` and size `1 GiB`. Then click `Create` **Note:** The available `StorageClass` will vary depending based upon your environment:
+
+    ![Create nginx build PersistentVolumeClaim](./readme-images/nginx_build_pvc.png)
+
+10. You should now have an overview of your newly created `pipeline-build-nginx` PersistentVolumeClaim. Navigate via the left hand navigation to the previously created pipelines:
+
+    ![nginx build PersistentVolumeClaim](./readme-images/nginx_build_pvc_overview.png)
+
+11. Click the 3 dots to the right of the `nginx-golden-image` pipeline and click `Start`:
 
     ![OCP Pipelines Nginx 3 Dots](./readme-images/nginx_pipeline_dots.png)
 
-6.  Modify the shared-workspace section to `VolumeClaimTemplate`:
+12. Modify the shared-workspace section to `PersistentVolumeClaim`:
 
-    ![OCP Pipelines Nginx VolumeClaim Template](./readme-images/nginx_pipeline_vc_template.png)
+    ![OCP Pipelines Nginx PVC](./readme-images/nginx_pipeline_pvc1.png)
 
-7.  Now click `Start`:
+13. Select the previously created `pipeline-build-nginx` PVC. Now click `Start`:
 
-    ![OCP Pipelines Nginx VolumeClaim Template](./readme-images/nginx_pipeline_start.png)
+    ![OCP Pipelines Nginx PVC](./readme-images/nginx_pipeline_pvc2.png)
 
-8.  You will be redirected to the newly created pipeline run:
+14. You will be redirected to the newly created pipeline run:
 
     ![OCP Pipelines Nginx Pipeline Run](./readme-images/nginx_pipeline_run.png)
 
-9.  Go back to the left hand section and selection `Pipelines`:
+15. Go back to the left hand section and selection `Pipelines`:
 
     ![OCP Pipelines](./readme-images/pipelines.png)
 
-10. We're now going to do the same for `php-golden-image`.
+16. We're now going to do the same for `php-golden-image`.
 
     ![OCP Pipelines Overview](./readme-images/php_pipeline_overview.png)
 
-11. Follow the steps you did for nginx with php, again making sure to select `VolumeClaimTemplate`
+17. Follow the steps you did for nginx with php, again making sure to select `PersistentVolumeClaim`
 
-    ![OCP Pipelines PHP VolumeClaim Template](./readme-images/php_pipeline_start.png)
+    ![OCP Pipelines PHP PersistentVolumeClaim](./readme-images/php_pipeline_start.png)
 
-12. Back in the pipelines section you should see both pipeline successfully build and turn green after a few minutes:
+18. Back in the pipelines section you should see both pipeline successfully build and turn green after a few minutes:
 
     ![Image Pipelines](./readme-images/image_pipelines.png)
 
-13. Now back to the command line! We created a tekton pipeline that has a few custom tasks. So we're going to have to create those tasks first:
+19. Now back to the command line! We created a tekton pipeline that has a few custom tasks. So we're going to have to create those tasks first:
 
     ```console
     oc create -f ./tekton/apply_manifest_task.yaml -n golden-image-example
@@ -85,13 +109,13 @@ It's assumed you have:
     oc create -f ./tekton/oc_exec_task.yaml -n golden-image-example
     ```
 
-14. Now with those tasks created, we're going to create our pipeline for our application that will use our newly created golden "base images" built by the `nginx-golden-image` and `php-golden-image` pipelines.
+20. Now with those tasks created, we're going to create our pipeline for our application that will use our newly created golden "base images" built by the `nginx-golden-image` and `php-golden-image` pipelines.
 
     ```console
     oc create -f ./tekton/pipeline.yaml -n golden-image-example
     ```
 
-15. Now if we go back to the Pipelines section in the OpenShift web-console, we'll see our newly created `deploy-example-website` pipeline. As before, click the 3 dots to the right and click start:
+21. Now if we go back to the Pipelines section in the OpenShift web-console, we'll see our newly created `deploy-example-website` pipeline. As before, click the 3 dots to the right and click start:
 
     ![Deploy Example Website Start](./readme-images/deploy_example_pipeline_start.png)
 
