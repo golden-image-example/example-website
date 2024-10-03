@@ -55,11 +55,6 @@ spec:
       - image: golden-image-example/php:8.2-fqm
         imagePullPolicy: Always
         name: php
-        ports:
-        - containerPort: 8080
-          protocol: TCP
-        - containerPort: 8443
-          protocol: TCP
         resources: {}
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
